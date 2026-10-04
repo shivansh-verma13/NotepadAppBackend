@@ -1,0 +1,8 @@
+{
+  "paused": false,
+  "product": "Notes",
+  "branch": "upgrade/notes-v1",
+  "repositories": ["MERN-NotePadApp-Frontend", "NotepadAppBackend"],
+  "allowlist": ["MERN-gpt", "MERN-gpt-Backend", "MERN-NotePadApp-Frontend", "NotepadAppBackend", "Video-Meet", "VideoMeetBackend", "MERN-ChatApp-FrontEnd", "MERN-ChatApp-Backend", "RecipeBlogApp", "RecipeBlogApp-FrontEnd", "Jobs-Hai", "WeatherAct", "Portfolio"],
+  "nextTask": "Complete Notes authentication and local integration before adding grounded note summaries."
+}

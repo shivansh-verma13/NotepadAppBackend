@@ -5,7 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test",
+    "start": "node index.js",
+    "lint": "node --check app.js && node --check controllers/notes-service.js && node --check utils/token-manager.js"
   },
   "author": "",
   "license": "ISC",
