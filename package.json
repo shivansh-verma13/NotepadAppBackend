@@ -5,9 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "node --test",
+    "test": "node --test test/*.test.js",
     "start": "node index.js",
-    "lint": "node --check app.js && node --check controllers/notes-service.js && node --check utils/token-manager.js"
+    "lint": "node --check app.js && node --check index.js && node --check db/connections.js && node --check controllers/user-controllers.js && node --check controllers/notes-service.js && node --check utils/config.js && node --check utils/request-boundary.js && node --check utils/validators.js && node --check utils/token-manager.js && node --check routes/userRoutes.js",
+    "test:integration": "node --test test/integration/*.test.js"
   },
   "author": "",
   "license": "ISC",
@@ -20,5 +21,8 @@
     "express-validator": "^7.0.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.1.1"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^10.4.3"
   }
 }
