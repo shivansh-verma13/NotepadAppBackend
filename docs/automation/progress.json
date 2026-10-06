@@ -1,0 +1,61 @@
+{
+  "paused": false,
+  "product": "Notes",
+  "branch": "upgrade/notes-v1",
+  "repositories": [
+    "MERN-NotePadApp-Frontend",
+    "NotepadAppBackend"
+  ],
+  "allowlist": [
+    "MERN-gpt",
+    "MERN-gpt-Backend",
+    "MERN-NotePadApp-Frontend",
+    "NotepadAppBackend",
+    "Video-Meet",
+    "VideoMeetBackend",
+    "MERN-ChatApp-FrontEnd",
+    "MERN-ChatApp-Backend",
+    "RecipeBlogApp",
+    "RecipeBlogApp-FrontEnd",
+    "Jobs-Hai",
+    "WeatherAct",
+    "Portfolio"
+  ],
+  "nextTask": "Rehearse an explicit unique username index and concurrent registration duplicate-key handling with temporary synthetic MongoDB, keeping autoIndex=false and legacy records unchanged; then resolve dependency/proxy/browser gates before preview.",
+  "pullRequests": [
+    "https://github.com/shivansh-verma13/MERN-NotePadApp-Frontend/pull/1",
+    "https://github.com/shivansh-verma13/NotepadAppBackend/pull/1"
+  ],
+  "verification": {
+    "frontendTests": 13,
+    "backendUnitHttpStartupTests": 12,
+    "backendRealLocalMongoIntegrationTests": 1,
+    "frontendBuild": "passed",
+    "frontendChangedFileLint": "passed",
+    "backendSyntaxChecks": "passed",
+    "browser": "unverified: empty browser inventory; Chrome and in-app unavailable; throttling retries and desktop/mobile authenticated CRUD pending",
+    "realLocalMongo": "passed: temporary mongod with synthetic accounts, CRUD/reconnect/owner isolation/concurrent cap",
+    "liveNotesDatabase": "not verified",
+    "deployment": "none; production unchanged"
+  },
+  "previousSubstantiveCommits": {
+    "frontend": "e092a984b50bcb0b93de4f2ffb57031ce5681818",
+    "backend": "c249fca54b57a95f36e669e8379d2802a467828d"
+  },
+  "lastRun": {
+    "date": "2026-10-07",
+    "slice": "bounded account attempts and username index recovery plan",
+    "commitReviewLinks": [
+      "https://github.com/shivansh-verma13/MERN-NotePadApp-Frontend/pull/1/commits",
+      "https://github.com/shivansh-verma13/NotepadAppBackend/pull/1/commits"
+    ],
+    "blockers": [
+      "Browser unavailable: desktop/mobile authenticated CRUD and throttled retries unverified",
+      "Dependency findings: backend 17 (3 critical), frontend 106 (5 critical)",
+      "Legacy username duplicates/index and concurrent registration race",
+      "Process-local limits: hosted proxy/shared-worker protection unverified",
+      "Approved synthetic preview configuration and hosted HTTPS journey"
+    ],
+    "checkpoint": "UPGRADE_LOG.md and docs/VERIFICATION.md; isolated run retained"
+  }
+}
