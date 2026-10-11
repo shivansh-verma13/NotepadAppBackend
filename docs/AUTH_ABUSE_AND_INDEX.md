@@ -26,10 +26,12 @@ lockout. Revisit after measuring legitimate traffic without logging credentials.
 
 ## Recoverable username uniqueness rollout (manual; not executed)
 
-The legacy schema's `unqiue` typo provides no uniqueness enforcement. The current
-find-before-save registration check can race. autoIndex remains false; this slice
-does not declare/build an index, merge accounts, delete records or change username
-case semantics. Registration uniqueness remains a release blocker.
+The legacy schema's `unqiue` typo has been replaced by named index metadata:
+`username_unique` on `{ username: 1 }`, unique with exact case semantics. The API
+maps only that username duplicate-key pattern to a redacted 409 without issuing
+a session. autoIndex remains false; startup does not build indexes. No live index,
+account merge or record cleanup was performed. Live uniqueness remains a release
+blocker until the manual audit/backup/build gates below pass.
 
 1. In an approved non-production copy, inspect actual indexes and audit username
    types, missing values and exact duplicate counts. Use a read-only aggregation
@@ -60,3 +62,24 @@ Deployment order: ship the frontend retry explanation, then the API limiter in
 the paired preview, after proxy verification. Old frontend clients still receive
 an error but show a generic retry prompt. Existing POST/header/cookie contracts
 remain required. No hosted deployment or live database verification is claimed.
+
+
+## Disposable rehearsal — October 11, 2026
+Locked backend integration uses a fresh temporary mongod with synthetic records
+and random local signing secrets. It verifies no automatic username index exists,
+then explicitly builds `username_unique` on the disposable user collection. A
+separate duplicate fixture rejects the same unique build (11000) and both full
+records/notes remain intact. Both registration prechecks are held at a test-only
+barrier before save: exactly one 201, one redacted 409, one stored account, no
+cookie on failure, then successful login/auth and the existing owner-only
+CRUD/reconnect/cap journey. The lookup barrier is a mock used only to schedule the
+race; writes, index enforcement, HTTP, bcrypt and persistence use real local Mongo.
+No live database or approved hosting credentials were used.
+
+For an owner-approved rollout only, after the preceding audit/backup/pause gates,
+the explicit driver operation is:
+`UserModel.collection.createIndex({ username: 1 }, { unique: true, name: "username_unique" })`.
+Do not call syncIndexes/createIndexes at startup or use automatic duplicate cleanup.
+The test does not authorize executing this against legacy or hosted data. Deploy
+the 409 API handling before building the index/reopening registration; paired UI
+explains the conflict and lets the user correct the username without losing fields.

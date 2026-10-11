@@ -17,3 +17,17 @@ Local checks ran on Node 24.14.0 / npm 11.12.0. Existing GitHub CI uses Node 22;
 
 ## October 7, 2026 — account abuse slice
 Locked installs and final lint/tests/build passed. Backend: 12 tests (six original mocked service/JWT tests plus real HTTP/configuration/startup checks and three limiter tests); temporary real MongoDB synthetic integration passed. Frontend: 13 mocked component/context tests in five suites and production build, 150.46 kB main gzip. No typecheck or backend compile script exists. All final checks passed; initial npm launcher/cache/network restrictions and sandbox startup timeout were recovered with bundled npm, checkout-local cache and approved execution. Browser inventory/Chrome/in-app unavailable; throttled account retries and desktop/mobile authenticated CRUD remain unverified. Hosted database/providers were not used. Audit findings: backend 17, including 9 high/3 critical; frontend 106, including 37 high/5 critical. CRA/Babel/Browserslist/Node warnings remain. See UPGRADE_LOG.md for source commits, PRs, blockers and deployment status; docs/AUTH_ABUSE_AND_INDEX.md for process-local limiter limits and manual index rollout.
+
+## October 11, 2026 — username uniqueness rehearsal
+Locked installs passed. Backend expanded syntax lint, 13 unit/HTTP/startup tests
+and one temporary real MongoDB synthetic integration passed. The first startup
+test hit its unchanged 12-second deadline; isolated and full reruns passed.
+Frontend lint and 14 mocked tests across five suites passed. Build and post-push
+CI status are recorded in the run checkpoint and PR bodies. No typecheck/backend
+compile script exists. Index/race/duplicate-preservation checks use real local
+MongoDB; only the precheck race scheduling barrier is mocked. No hosted database,
+provider, production secrets or original records were used. autoIndex=false and
+no automatic live index operation. Browser inventory empty, Chrome/in-app
+unavailable: desktop/mobile conflict/retry/CRUD and cookie/throttle flows remain
+unverified. Audits unchanged: backend 17 (3 critical), frontend 106 (5 critical).
+Frontend production build passed: 150.51 kB main JS gzip; existing CRA/Babel/Browserslist/Node warnings remain.
