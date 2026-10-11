@@ -39,7 +39,8 @@
     "deployment": "none; production unchanged",
     "backendAudit": "passed: zero findings after fresh locked install",
     "backendCurrentRun": "fresh install, syntax lint, 13 unit/HTTP/startup tests, 1 real local synthetic Mongo integration passed; no hosted infrastructure",
-    "frontendCurrentRun": "runtime unchanged; frontend checks and browser not rerun; prior results historical"
+    "frontendCurrentRun": "local frontend checks not rerun; post-push Node-22 CI install/lint/tests/production build passed on 91b8751; browser/live hosting unverified",
+    "currentRunCI": "backend 03c724b and frontend 91b8751 push and PR CI succeeded; final docs-head status in run checkpoint and PR bodies"
   },
   "previousSubstantiveCommits": {
     "frontend": "4954fd398befde85b523494e69968fe5f7e6ce49",
