@@ -19,7 +19,11 @@ export const userRegister = async (req, res) => {
     await user.save();
     issueSession(req, res, user);
     return res.status(201).json({ message: "Created User", userName: user.name });
-  } catch {
+  } catch (error) {
+    // Only the username constraint represents an unavailable username. Never expose DB details.
+    if (error?.code === 11000 && error?.keyPattern?.username === 1 && Object.keys(error.keyPattern).length === 1) {
+      return res.status(409).json({ message: "Username is unavailable" });
+    }
     return res.status(500).json({ message: "Unable to register user" });
   }
 };

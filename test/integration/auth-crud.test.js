@@ -14,6 +14,19 @@ test("real local MongoDB: register, cookie auth, owner-scoped CRUD, reconnect, l
   const settings = readConfig({ ...process.env, NODE_ENV: "test", MONGODB_URL: mongo.getUri(), COOKIE_SECRET: randomBytes(32).toString("hex"), FRONTEND_ORIGINS: "http://localhost:3000", COOKIE_SAME_SITE: "lax" });
   await connectToDatabase(settings.mongoUrl);
   t.after(() => disconnectFromDatabase());
+  await UserModel.init();
+  assert.equal(UserModel.db.config.autoIndex, false);
+  assert.equal((await UserModel.collection.indexes()).some(index => index.name === "username_unique"), false);
+  // A failed rehearsal must leave both legacy accounts and their notes intact.
+  const legacy = UserModel.db.collection("synthetic_legacy_duplicates");
+  const legacyRecords = ["A", "B"].map(name => ({ name, username: "synthetic-duplicate", notes: [{ title: name, content: "Preserve me" }] }));
+  await legacy.insertMany(legacyRecords);
+  await assert.rejects(legacy.createIndex({ username: 1 }, { unique: true, name: "username_unique" }), error => error.code === 11000);
+  assert.deepEqual(await legacy.find({}).toArray(), legacyRecords);
+  await UserModel.collection.createIndex({ username: 1 }, { unique: true, name: "username_unique" });
+  const usernameIndex = (await UserModel.collection.indexes()).find(index => index.name === "username_unique");
+  assert.equal(usernameIndex.unique, true);
+  assert.deepEqual(usernameIndex.key, { username: 1 });
   const server = createApp(settings).listen(0, "127.0.0.1");
   await new Promise(resolve => server.once("listening", resolve));
   t.after(() => new Promise(resolve => server.close(resolve)));
@@ -24,6 +37,34 @@ test("real local MongoDB: register, cookie auth, owner-scoped CRUD, reconnect, l
     ...(body === undefined ? {} : { body: JSON.stringify(body) }),
   });
   const password = "synthetic test password";
+  // Hold both preflight lookups until they complete, forcing the check-before-save race.
+  const originalFindOne = UserModel.findOne;
+  let release;
+  const bothChecked = new Promise(resolve => { release = resolve; });
+  let checked = 0;
+  const restoreFindOne = () => { UserModel.findOne = originalFindOne; };
+  t.after(restoreFindOne);
+  UserModel.findOne = function (filter, ...args) {
+    const query = originalFindOne.call(this, filter, ...args);
+    if (filter.username !== "synthetic-race") return query;
+    return { select: async fields => {
+      const result = await query.select(fields);
+      assert.equal(result, null);
+      if (++checked === 2) release();
+      await bothChecked;
+      return result;
+    } };
+  };
+  const raced = await Promise.all(["A", "B"].map(name => request("/user/register", "POST", { name, username: "synthetic-race", password })));
+  restoreFindOne();
+  assert.deepEqual(raced.map(response => response.status).sort(), [201, 409]);
+  assert.equal(await UserModel.countDocuments({ username: "synthetic-race" }), 1);
+  const loser = raced.find(response => response.status === 409);
+  assert.equal(loser.headers.get("set-cookie"), null);
+  assert.deepEqual(await loser.json(), { message: "Username is unavailable" });
+  const raceLogin = await request("/user/login", "POST", { username: "synthetic-race", password });
+  assert.equal(raceLogin.status, 200);
+  assert.equal((await request("/user/auth", "GET", undefined, raceLogin.headers.get("set-cookie").split(";")[0])).status, 200);
   const register = await request("/user/register", "POST", { name: "Synthetic Owner", username: "synthetic-owner", password });
   assert.equal(register.status, 201);
   const rawCookie = register.headers.get("set-cookie");
