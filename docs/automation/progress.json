@@ -21,7 +21,7 @@
     "WeatherAct",
     "Portfolio"
   ],
-  "nextTask": "Remediate backend critical dependency findings with bounded locked upgrades and reverify auth/index/CRUD; live index rollout stays owner-gated.",
+  "nextTask": "Remediate frontend runtime critical dependency paths with bounded locked upgrades and rerun lint/tests/build; decide on CRA migration only if compatible fixes cannot meet the gate.",
   "pullRequests": [
     "https://github.com/shivansh-verma13/MERN-NotePadApp-Frontend/pull/1",
     "https://github.com/shivansh-verma13/NotepadAppBackend/pull/1"
@@ -36,24 +36,27 @@
     "browser": "unverified: empty inventory; Chrome/in-app unavailable; desktop/mobile username conflict/corrected retry and authenticated CRUD/throttling pending",
     "realLocalMongo": "passed: explicit index, forced registration race, rejected duplicate index with intact fixtures, auth/CRUD/reconnect/owner isolation/cap; synthetic only",
     "liveNotesDatabase": "not verified",
-    "deployment": "none; production unchanged"
+    "deployment": "none; production unchanged",
+    "backendAudit": "passed: zero findings after fresh locked install",
+    "backendCurrentRun": "fresh install, syntax lint, 13 unit/HTTP/startup tests, 1 real local synthetic Mongo integration passed; no hosted infrastructure",
+    "frontendCurrentRun": "runtime unchanged; frontend checks and browser not rerun; prior results historical"
   },
   "previousSubstantiveCommits": {
     "frontend": "4954fd398befde85b523494e69968fe5f7e6ce49",
-    "backend": "d76833477b7bc032ecaabd140916ad5bbacb8d60"
+    "backend": "8331c8ee947dd6b6f0606c6d01610bb4760e3306"
   },
   "lastRun": {
     "date": "2026-10-11",
-    "slice": "explicit username index rehearsal and duplicate registration recovery",
+    "slice": "backend patched dependencies and synthetic bcrypt-5 login compatibility",
     "commitReviewLinks": [
       "https://github.com/shivansh-verma13/MERN-NotePadApp-Frontend/pull/1/commits",
       "https://github.com/shivansh-verma13/NotepadAppBackend/pull/1/commits"
     ],
     "blockers": [
-      "Browser unavailable: desktop/mobile conflict/retry/authenticated CRUD/throttling unverified",
-      "Dependency findings: backend 17 (3 critical), frontend 106 (5 critical)",
-      "Live username index requires owner-approved legacy audit, verified backup and paused-registration rollout",
-      "Process-local limiter: hosted proxy/shared-worker protection unverified",
+      "Frontend prior audit: 106 findings including 5 critical; not rerun in backend-only slice",
+      "Desktop/mobile conflict/retry/auth/CRUD/cookie/throttling browser journey unverified",
+      "Live username index needs owner-approved audit/backup/paused-registration rollout",
+      "Hosted proxy/shared-worker budget verification",
       "Approved synthetic preview configuration and hosted HTTPS journey"
     ],
     "checkpoint": "UPGRADE_LOG.md and docs/VERIFICATION.md; isolated run retained"
