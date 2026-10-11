@@ -37,6 +37,18 @@ test("real local MongoDB: register, cookie auth, owner-scoped CRUD, reconnect, l
     ...(body === undefined ? {} : { body: JSON.stringify(body) }),
   });
   const password = "synthetic test password";
+  // Generated locally with the upstream bcrypt 5.1.1 Windows N-API binary.
+  // Synthetic fixture only: upgrading bcrypt must not require account rehashing.
+  const legacyHash = "$2b$10$8i0K96tO3FfZJx2BsPUR8uTL/G0Vw1ArhpX33EXKmK8iftMQ0VJGK";
+  await UserModel.create({ name: "Synthetic Legacy", username: "synthetic-legacy", password: legacyHash });
+  const legacyWrong = await request("/user/login", "POST", { username: "synthetic-legacy", password: "incorrect" });
+  assert.equal(legacyWrong.status, 401);
+  assert.equal(legacyWrong.headers.get("set-cookie"), null);
+  const legacyLogin = await request("/user/login", "POST", { username: "synthetic-legacy", password: "synthetic legacy password" });
+  assert.equal(legacyLogin.status, 200);
+  const legacyCookie = legacyLogin.headers.get("set-cookie").split(";")[0];
+  assert.equal((await request("/user/auth", "GET", undefined, legacyCookie)).status, 200);
+  assert.equal((await UserModel.findOne({ username: "synthetic-legacy" })).password, legacyHash);
   // Hold both preflight lookups until they complete, forcing the check-before-save race.
   const originalFindOne = UserModel.findOne;
   let release;
