@@ -1,5 +1,13 @@
 # Decisions
 
+## Paired frontend toolchain boundary — October 13, 2026
+
+Proposal: retain the existing Express/Mongo API while the frontend finishes compatible dependency patches and then replaces CRA with Vite in a separate bounded slice.
+
+Challenge: retaining patched CRA minimizes change but leaves incompatible pinned toolchain chains; a custom webpack/Jest setup preserves conventions while adding maintenance responsibility. Vite changes frontend entrypoints/environment/testing and requires explicit parity checks, but does not require backend architecture, credentials, persistence or deployment changes. See the paired frontend docs/DECISIONS.md for audit evidence and official React/Vite sources.
+
+Decision: select Vite for the next frontend build-tool slice, retaining React/UI/business logic and the /notepad API, cookie/Origin/header boundary and public API URL configuration contract. Require install/lint/behavior tests/build, asset/SPA fallback and available browser checks. No backend runtime change or deployment in this patch slice; existing paired rollout/index approval gates remain. Reconsider if a bounded spike cannot preserve those contracts without broad changes. Reverse frontend patches on CI/build regression; no data or infrastructure rollback is needed.
+
 ## Notes slice 1: refactor the save boundary
 Proposal: retain React 18/MUI and Express/Mongoose, keep endpoint and response contracts, replace whole-user read/mutate/save with owner-scoped atomic Mongo operators and preserve failed UI drafts.
 Challenge: a Vite/TypeScript rebuild would simplify the aging CRA toolchain, but it delays fixing data loss and mixes API migration with UI replacement. A separate notes collection supports pagination better but requires an explicit data migration.
