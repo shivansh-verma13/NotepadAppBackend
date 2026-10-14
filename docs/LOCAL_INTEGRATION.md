@@ -4,7 +4,7 @@ The paired upgrade/notes-v1 branches must be released together. Existing note en
 
 ## Local setup
 
-1. Use Node 22+ and npm ci in both repositories.
+1. Use Node 22.12+ on the Node 22 line, or Node 24+, and npm ci in both repositories.
 2. Backend: copy .env.example to ignored .env and generate two independent random values of at least 32 characters for JWT_SECRET and COOKIE_SECRET. Use only a new local synthetic database. Never copy existing hosted credentials here. FRONTEND_ORIGINS defaults to http://localhost:3000 outside production; configure it explicitly when using another frontend port. PORT defaults to 4040. Run npm start with a running local MongoDB.
 3. Frontend: copy .env.example to ignored .env.local for the separate local API at http://localhost:4040/notepad, then npm start. With no override it uses /notepad on the current origin, which requires a reverse proxy. REACT_APP_API_URL is public build configuration, never a secret. Restart/rebuild after changing it. Requests include cookies, the write header and a 15-second timeout.
 4. Register a synthetic account, create/edit a note, reload /notes, log out, then log in and delete the synthetic note. Session checking must finish before redirecting or fetching notes. Server errors offer a retry; an actual 401 means signed out.
@@ -22,3 +22,7 @@ GET /health returns 200 only when Mongoose is connected, otherwise 503, with no 
 Before preview: browser-check desktop/mobile register/login/create/edit/reload/logout with real local persistence; resolve dependency findings, add authentication abuse controls and assess the original username uniqueness typo (unqiue) and duplicate-account/index risk. autoIndex is disabled to avoid creating indexes against legacy data automatically; no migration or uniqueness guarantee is claimed. Then explicitly provision/configure a dedicated approved synthetic preview database; keep any live secrets in hosting. Hosted Atlas/HTTPS cookies are not yet verified.
 
 Rollback: stop the preview and restore the previous paired frontend/backend revisions together. The older frontend uses GET logout and cannot use the new write gate, so mixed releases are unsupported. Embedded note IDs and data shape are unchanged; no destructive migration, original-record edits or production replacement occurred. Stateless logout clears the browser cookie; previously copied JWTs are valid until expiry, so session revocation is not claimed.
+
+## October 14 toolchain contract
+
+Frontend now uses Vite with the same public REACT_APP_API_URL, port 3000 and build/ output; compiled modules are in assets/. Standalone Jest preserves all 18 behavior tests. Dev/build/preview configuration, public assets and SPA fallback have synthetic HTTP checks. See the frontend docs/TOOLCHAIN.md for modern browser targets, exact setting exposure and rollback. Netlify SPA fallback is declared; place an approved same-origin /notepad proxy before it. Backend API, cookie/Origin/header contract and deployment order are unchanged. No deployment or hosted verification. Browser desktop/mobile authentication/CRUD/cookie/throttling remains unverified.

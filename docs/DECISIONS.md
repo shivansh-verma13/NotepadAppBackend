@@ -1,5 +1,13 @@
 # Decisions
 
+## Vite implementation coordination — October 14, 2026
+
+Proposal: complete the previously selected frontend Vite migration without changing Express/Mongo, API response keys, cookie/Origin/header authentication or persistence.
+
+Challenge: standalone Jest keeps all 18 existing frontend behavior tests with explicit Babel/lint configuration; Vitest would unify transforms but adds test-framework migration. Both are viable; frontend docs/DECISIONS.md records versions, evidence and limits. Forced incompatible dependency upgrades would obscure support instead of resolving the gate.
+
+Decision: retain Jest in this bounded slice. Frontend keeps public REACT_APP_API_URL, port 3000 and build/ output (generated modules move to assets/); automatic VITE_* exposure is disabled. Document modern browser targets and Netlify SPA fallback with same-origin API proxy precedence. Node 22.12+/24 is required for the paired local setup. Revert the frontend revision on CI/browser/host regressions; revisit the test framework if remaining tool-only advisories cannot be safely repaired. No backend runtime, hosting, data or deployment change. Existing paired auth rollout and owner-approved username index gates remain.
+
 ## Paired frontend toolchain boundary — October 13, 2026
 
 Proposal: retain the existing Express/Mongo API while the frontend finishes compatible dependency patches and then replaces CRA with Vite in a separate bounded slice.

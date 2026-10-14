@@ -21,7 +21,7 @@
     "WeatherAct",
     "Portfolio"
   ],
-  "nextTask": "Bounded CRA-to-Vite build/dev migration preserving React/UI, API URL/auth/CRUD, assets/static output/SPA fallback and equivalent lint/18 behavior tests; reverify install/audit/build and available desktop/mobile browser flows.",
+  "nextTask": "Bounded React Router 6-to-7 upgrade to repair two runtime moderate advisories, with real router/auth coverage and retained UI/API tests; verify install/audit/lint/build/toolchain and available desktop/mobile browser flows. Review remaining Jest/linter support separately.",
   "pullRequests": [
     "https://github.com/shivansh-verma13/MERN-NotePadApp-Frontend/pull/1",
     "https://github.com/shivansh-verma13/NotepadAppBackend/pull/1"
@@ -38,27 +38,29 @@
     "liveNotesDatabase": "not verified",
     "deployment": "none; production unchanged",
     "backendAudit": "passed: zero findings after fresh locked install",
-    "backendCurrentRun": "Runtime/dependencies unchanged; not rerun locally. Pre-edit Node-22 push/PR CI passed, including real local synthetic Mongo integration.",
-    "frontendCurrentRun": "Final fresh install (1559 packages), lint, 18 tests (14 mocked UI/context plus 4 actual Axios synthetic loopback HTTP), production build (151.84 kB main gzip) and entrypoint check passed. Audit 90: 21 high/62 moderate/7 low/0 critical. No browser/live-host verification.",
-    "currentRunCI": "Pre-edit frontend 65d4359 and backend 01e7c8b push/PR CI passed; post-push results retained in CHECKPOINT.md and PR bodies."
+    "backendCurrentRun": "Runtime/dependencies unchanged and not rerun locally. Pre-edit Node-22 push/PR CI passed, including real local synthetic Mongo integration.",
+    "frontendCurrentRun": "Fresh locked install (1089 packages), expanded lint, 18 tests (14 mocked UI/context + 4 actual Axios synthetic loopback HTTP), production build (150.51 kB main gzip) and dev/build/preview toolchain checks passed. Full audit 21 moderate/0 high/0 critical; runtime-only 2 moderate Router findings. No browser/live host verification.",
+    "currentRunCI": "Pre-edit frontend 0411375 and backend 816b8c9 push/PR CI passed. Post-push ordinary CI will be recorded in retained CHECKPOINT.md and existing PR bodies."
   },
   "previousSubstantiveCommits": {
-    "frontend": "4954fd398befde85b523494e69968fe5f7e6ce49",
+    "frontend": "187a7b79c975471e49a112e47be80abaf73e7ad2",
     "backend": "8331c8ee947dd6b6f0606c6d01610bb4760e3306"
   },
   "lastRun": {
-    "date": "2026-10-13",
-    "slice": "compatible frontend high-severity repair and paired bounded CRA replacement decision",
+    "date": "2026-10-14",
+    "slice": "Vite build/dev migration with retained Jest behavior coverage and synthetic static/environment checks",
     "commitReviewLinks": [
       "https://github.com/shivansh-verma13/MERN-NotePadApp-Frontend/pull/1/commits",
       "https://github.com/shivansh-verma13/NotepadAppBackend/pull/1/commits"
     ],
     "blockers": [
-      "Frontend audit 90: zero critical, 21 high, 62 moderate, 7 low",
-      "Desktop/mobile conflict/retry/auth/CRUD/cookie/throttling browser journey unverified",
-      "Live username index needs owner-approved audit/backup/paused-registration rollout",
+      "Frontend full audit: 21 moderate; runtime-only: 2 moderate Router findings",
+      "Unsupported ESLint 9/current React lint plugin support; Jest/glob/encoding toolchain warnings",
+      "Desktop/mobile auth/conflict/retry/CRUD/reload/logout/cookie/CORS/throttling browser journey unverified",
       "Hosted proxy/shared-worker budget verification",
-      "Approved synthetic preview configuration and hosted HTTPS journey"
+      "Owner-approved live username duplicate audit/backup/paused-registration index rollout",
+      "Approved synthetic HTTPS/database setup and hosted SPA/API proxy ordering",
+      "Legacy-browser compilation/layout parity unverified"
     ],
     "checkpoint": "Both UPGRADE_LOG.md/BACKLOG.md and retained isolated run CHECKPOINT.md; no deployment"
   }
