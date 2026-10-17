@@ -26,3 +26,8 @@ Rollback: stop the preview and restore the previous paired frontend/backend revi
 ## October 14 toolchain contract
 
 Frontend now uses Vite with the same public REACT_APP_API_URL, port 3000 and build/ output; compiled modules are in assets/. Standalone Jest preserves all 18 behavior tests. Dev/build/preview configuration, public assets and SPA fallback have synthetic HTTP checks. See the frontend docs/TOOLCHAIN.md for modern browser targets, exact setting exposure and rollback. Netlify SPA fallback is declared; place an approved same-origin /notepad proxy before it. Backend API, cookie/Origin/header contract and deployment order are unchanged. No deployment or hosted verification. Browser desktop/mobile authentication/CRUD/cookie/throttling remains unverified.
+
+
+## October 17 test-tool update
+
+Frontend tests now use Vitest 5.0.5/jsdom 28.1.0 with all 30 existing cases retained; run npm test without Jest CLI flags. Fresh frontend full/runtime audits are zero; unsupported ESLint 9 remains. This changes no paired API/cookie/deployment contract. Synthetic checks do not establish hosted or browser behavior; existing preview/index/proxy gates still apply.
