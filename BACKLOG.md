@@ -1,5 +1,13 @@
 # Modernization backlog — October 5, 2026
 
+## Workspace mutation ordering checkpoint — October 18, 2026
+Shared synchronous create/edit/delete guard, disabled write controls, accessible operation status, failed-draft retention and old-session response rejection are complete. Search remains usable. Fresh frontend install/lint/35 tests/build/toolchain and full audit (zero) passed; 31 tests mock UI/context/API boundaries and four use real Axios synthetic loopback HTTP. Backend runtime unchanged, not rerun locally; exact pre-edit CI passed. Initial modal-hidden test query was corrected before final passing checks. See UPGRADE_LOG.md, paired docs/DECISIONS.md, existing PR #1 histories and retained CHECKPOINT.md for verification, commit links and recovery.
+
+No browser (inventory/in-app/Chrome unavailable), live infrastructure or deployment claim. Pending/failure/search/filtered persisted CRUD/keyboard/responsive and prior auth/cookie/throttle browser journeys remain unverified. Unsupported ESLint 9, hosted proxy/shared-worker budgets, owner-approved live username audit/backup/index rollout and approved synthetic HTTPS/database/SPA/API proxy setup remain gates. This guard is single-workspace ordering, not cross-tab revisions or proof that a timed-out write did not commit. Criteria 4–6 incomplete; keep Notes active.
+
+Next bounded task: make create retry safe after an ambiguous timeout with bounded owner-scoped idempotency and synthetic commit-then-timeout/retry tests; record the API/storage choice first. Browser-check pending/search/persisted CRUD when available.
+
+
 Inventory refreshed through authenticated GitHub CLI: 43 repositories, including private repos. Fifteen candidate source trees were previously inspected; Notes was audited again for this release. The original app pairs and API paths confirm the map below. Names alone are not ownership evidence. No private repository was selected.
 
 | Priority | Product / repositories | State and value | Next bounded release / AI | Scope and hosting |

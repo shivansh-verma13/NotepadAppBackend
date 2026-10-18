@@ -1,5 +1,14 @@
 # Decisions
 
+## Workspace mutation ordering — October 18, 2026
+
+Proposal: admit only one create/edit/delete request at a time in the mounted workspace, using a synchronous ref guard plus disabled controls and an announced pending operation. Keep the existing whole-library API response contract and reject results from an invalidated session.
+
+Challenge: applying per-note response patches permits parallel writes but needs reliable create identity/version contracts and careful reconciliation of stale snapshots. Server revisions/conditional writes coordinate tabs/devices but add an API and persistence contract. The current API returns entire arrays and the bounded workspace has no revision field; response arrival order cannot establish write order.
+
+Decision: use the shared workspace guard for this bounded data-loss fix; do not queue surprise mutations. Release it on success/failure, retain failed drafts and permit search while waiting. Deferred synthetic tests cover blocked overlap, delete retry, edit retry and old-session responses arriving during a newer mutation. This is single-workspace response ordering only, not cross-tab concurrency control, idempotency or cancellation of a write after an HTTP timeout. Revisit server revisions/idempotent create before claiming safe ambiguous-timeout retry or multi-client editing; reverse this UI revision if supported checks or real browser keyboard/CRUD flows regress. Backend contract, persistence and deployment order stay unchanged.
+
+
 ## Vite implementation coordination — October 14, 2026
 
 Proposal: complete the previously selected frontend Vite migration without changing Express/Mongo, API response keys, cookie/Origin/header authentication or persistence.
