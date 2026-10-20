@@ -55,3 +55,14 @@ test('expired, tampered and invalid signed-cookie tokens return 401 without a re
   verifyToken({signedCookies:{[COOKIE_NAME]:createToken('demo',owner,'1m')}},res,()=>{called=true;});
   assert.equal(called,true); assert.equal(res.locals.jwtData.id,owner);
 });
+
+test('invalid, expired and future create keys fail before database access', async () => {
+  const time=1800000000000;
+  const uuid='11111111-1111-4111-8111-111111111111';
+  const controller=createNoteControllers({updateOne(){throw Error('must not run');},findOneAndUpdate(){throw Error('must not run');}},()=>time);
+  for(const createKey of [null,{},'bad',`${time-86400000}.${uuid}`,`${time+60001}.${uuid}`,'x'.repeat(500)]) {
+    const res=response();
+    await controller.createUserNote({body:{title:'Title',content:'Content',createKey}},res);
+    assert.equal(res.code,400);
+  }
+});

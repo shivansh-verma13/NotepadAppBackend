@@ -31,3 +31,10 @@ Frontend now uses Vite with the same public REACT_APP_API_URL, port 3000 and bui
 ## October 17 test-tool update
 
 Frontend tests now use Vitest 5.0.5/jsdom 28.1.0 with all 30 existing cases retained; run npm test without Jest CLI flags. Fresh frontend full/runtime audits are zero; unsupported ESLint 9 remains. This changes no paired API/cookie/deployment contract. Synthetic checks do not establish hosted or browser behavior; existing preview/index/proxy gates still apply.
+
+
+## October 20 create retry contract
+
+POST /notepad/notes/newNote optionally accepts createKey: epoch-milliseconds.UUID-v4 alongside title/content. Use one exact key and normalized title/content for all retries of one create. Matching replay returns 201 and the current notes array; a different draft with that key returns 409. The owner-scoped receipt persists atomically with the note and survives edit/delete. Keys expire 24 hours after their timestamp; timestamps over 60 seconds in the future also reject with 400 CREATE_RETRY_EXPIRED. Expired keys cannot become new creates after pruning. At 1000 unexpired receipts new keyed creates return 429, without evicting a live receipt. Existing note limit remains 200; accepted replays still work at either cap. Responses omit receipt data. Server clocks must be correct.
+
+Deploy the backward-compatible API first, then the keyed frontend. Legacy callers without keys still work but have no retry protection. Capture keeps its key and draft only in mounted memory; after uncertain failure keep the page open and retry the same save. Fields remain selectable/read-only for copying. A later authentication failure cannot reset an uncertain attempt. Reload/navigation or an expired key requires checking the library before starting a new note; protection across reload and edit/delete revision conflicts is not claimed. Do not automatically replay against the old API or erase receipts during the 24-hour window. No live migration or hosting operation is part of this change.
