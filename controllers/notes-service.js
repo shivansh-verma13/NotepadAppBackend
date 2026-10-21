@@ -12,6 +12,18 @@ export function createNoteControllers(model, now = Date.now) {
     catch { return res.status(500).json({message:"Unable to save notes. Please retry."}); }
   };
   const options = {new:true,runValidators:true,projection:{notes:1}};
+  const validRevision = value => value === undefined || (Number.isSafeInteger(value) && value >= 0 && value < Number.MAX_SAFE_INTEGER);
+  const noteFilter = (owner, noteID, revision) => revision === undefined
+    ? {_id:owner,"notes._id":noteID}
+    : {_id:owner,notes:{$elemMatch:{_id:noteID,...(revision === 0
+      ? {$or:[{revision:0},{revision:{$exists:false}}]}
+      : {revision})}}};
+  const missingOrConflict = async (res,owner,noteID,revision) => {
+    if (revision !== undefined && await model.exists({_id:owner,"notes._id":noteID})) {
+      return res.status(409).json({code:"NOTE_CONFLICT",message:"This note changed in another session. Copy your draft before reloading your notes."});
+    }
+    return res.status(404).json({message:"Note not found"});
+  };
   return {
     getUserNotes: action(async (_req,res,owner) => {
       const user = await model.findById(owner,{notes:1});
@@ -49,16 +61,17 @@ export function createNoteControllers(model, now = Date.now) {
       return user ? res.status(201).json({message:"Created a Note",notes:user.notes}) : res.status(409).json({message:"Unable to add a note. Your account may have reached the 200-note limit."});
     }),
     updateUserNote: action(async (req,res,owner) => {
-      const {noteID,content} = req.body ?? {};
-      if (typeof noteID !== "string" || !objectId.test(noteID) || !validText(content,20000)) return res.status(400).json({message:"Provide a valid note and content (1–20,000 characters)."});
-      const user = await model.findOneAndUpdate({_id:owner,"notes._id":noteID},{$set:{"notes.$.content":content}},options);
-      return user ? res.status(200).json({message:"OK",notes:user.notes}) : res.status(404).json({message:"Note not found"});
+      const {noteID,content,expectedRevision} = req.body ?? {};
+      if (typeof noteID !== "string" || !objectId.test(noteID) || !validText(content,20000) || !validRevision(expectedRevision)) return res.status(400).json({message:"Provide a valid note, revision and content (1–20,000 characters)."});
+      const user = await model.findOneAndUpdate(noteFilter(owner,noteID,expectedRevision),{$set:{"notes.$.content":content},$inc:{"notes.$.revision":1}},options);
+      return user ? res.status(200).json({message:"OK",notes:user.notes}) : await missingOrConflict(res,owner,noteID,expectedRevision);
     }),
     deleteNote: action(async (req,res,owner) => {
       const noteID = req.params.noteID;
-      if (typeof noteID !== "string" || !objectId.test(noteID)) return res.status(400).json({message:"Provide a valid note"});
-      const user = await model.findOneAndUpdate({_id:owner,"notes._id":noteID},{$pull:{notes:{_id:noteID}}},options);
-      return user ? res.status(200).json({message:"OK",userNotes:user.notes}) : res.status(404).json({message:"Note not found"});
+      const {expectedRevision} = req.body ?? {};
+      if (typeof noteID !== "string" || !objectId.test(noteID) || !validRevision(expectedRevision)) return res.status(400).json({message:"Provide a valid note and revision"});
+      const user = await model.findOneAndUpdate(noteFilter(owner,noteID,expectedRevision),{$pull:{notes:{_id:noteID}}},options);
+      return user ? res.status(200).json({message:"OK",userNotes:user.notes}) : await missingOrConflict(res,owner,noteID,expectedRevision);
     }),
   };
 }

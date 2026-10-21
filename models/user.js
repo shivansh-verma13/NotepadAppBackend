@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const noteSchema = new mongoose.Schema({
   title: { type: String, required: true },
   content: { type: String, required: true },
+  revision: { type: Number, default: 0, min: 0, max: Number.MAX_SAFE_INTEGER },
 });
 
 const userSchema = new mongoose.Schema({

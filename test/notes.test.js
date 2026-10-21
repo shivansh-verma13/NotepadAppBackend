@@ -32,7 +32,7 @@ test('edit and delete cannot target a note without its authenticated owner', asy
   const remove=response(); await controller.deleteNote({params:{noteID}},remove);
   assert.equal(edit.code,404); assert.equal(remove.code,404);
   for(const query of seen) assert.deepEqual(query.filter,{_id:owner,'notes._id':noteID});
-  assert.deepEqual(seen[0].update,{$set:{'notes.$.content':'updated'}});
+  assert.deepEqual(seen[0].update,{$set:{'notes.$.content':'updated'},$inc:{'notes.$.revision':1}});
   assert.deepEqual(seen[1].update,{$pull:{notes:{_id:noteID}}});
 });
 test('unauthenticated and malformed IDs fail before database access', async () => {
@@ -65,4 +65,37 @@ test('invalid, expired and future create keys fail before database access', asyn
     await controller.createUserNote({body:{title:'Title',content:'Content',createKey}},res);
     assert.equal(res.code,400);
   }
+});
+
+
+test('invalid conditional revisions never reach persistence', async () => {
+  const controller=createNoteControllers({findOneAndUpdate(){throw Error('must not run');}});
+  for (const expectedRevision of [null,-1,1.5,'0',{},Number.MAX_SAFE_INTEGER,Infinity]) {
+    const edit=response(); await controller.updateUserNote({body:{noteID,content:'Draft',expectedRevision}},edit);
+    const remove=response(); await controller.deleteNote({params:{noteID},body:{expectedRevision}},remove);
+    assert.equal(edit.code,400); assert.equal(remove.code,400);
+  }
+});
+
+test('conditional failures distinguish owner-scoped conflict from missing without leaking notes', async () => {
+  let exists=true;
+  const controller=createNoteControllers({
+    async findOneAndUpdate(filter) {
+      assert.equal(filter._id,owner);
+      assert.deepEqual(filter.notes,{$elemMatch:{_id:noteID,revision:3}});
+      return null;
+    },
+    async exists(filter) {assert.deepEqual(filter,{_id:owner,'notes._id':noteID});return exists;}
+  });
+  const edit=response(); await controller.updateUserNote({body:{noteID,content:'Draft',expectedRevision:3}},edit);
+  assert.equal(edit.code,409);assert.equal(edit.data.code,'NOTE_CONFLICT');assert.equal('notes' in edit.data,false);
+  exists=false;
+  const remove=response();await controller.deleteNote({params:{noteID},body:{expectedRevision:3}},remove);
+  assert.equal(remove.code,404);assert.deepEqual(remove.data,{message:'Note not found'});
+});
+
+test('conflict lookup errors use the redacted failure boundary',async()=>{
+  const controller=createNoteControllers({async findOneAndUpdate(){return null;},async exists(){throw Error('private');}});
+  const edit=response();await controller.updateUserNote({body:{noteID,content:'Draft',expectedRevision:1}},edit);
+  assert.equal(edit.code,500);assert.equal(JSON.stringify(edit.data).includes('private'),false);
 });
