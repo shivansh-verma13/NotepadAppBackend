@@ -5,11 +5,13 @@ import router from "./routes/index.js";
 import mongoose from "mongoose";
 import { requestBoundary, WRITE_HEADER } from "./utils/request-boundary.js";
 import { createAuthLimiter } from "./utils/auth-limiter.js";
+import { proxyBoundary } from "./utils/proxy-boundary.js";
 
 export function createApp(settings) {
   const app = express();
   app.disable("x-powered-by");
   app.locals.cookieOptions = settings.cookieOptions;
+  app.use("/notepad", proxyBoundary(settings.proxySecret));
   app.use(requestBoundary(settings.origins));
   app.use(cors({
     origin: settings.origins, credentials: true,

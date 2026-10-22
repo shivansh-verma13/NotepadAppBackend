@@ -8,7 +8,7 @@ export function createAuthLimiter({ limit = 20, windowMs = 15 * 60 * 1000, maxKe
   const buckets = new Map();
   return (req, res, next) => {
     const time = now();
-    const key = createHash("sha256").update(req.socket.remoteAddress || "unknown").digest("hex");
+    const key = createHash("sha256").update(req.notesClientIP || req.socket.remoteAddress || "unknown").digest("hex");
     let bucket = buckets.get(key);
     if (bucket && bucket.resetAt <= time) {
       buckets.delete(key);

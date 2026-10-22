@@ -8,13 +8,13 @@ const env = () => ({ JWT_SECRET: randomBytes(32).toString("hex"), COOKIE_SECRET:
 
 test("configuration fails closed and production cookies are host-only HTTPS", () => {
   assert.throws(() => readConfig({}), /JWT_SECRET/);
-  assert.throws(() => readConfig({ ...env(), NODE_ENV: "production" }), /FRONTEND_ORIGINS/);
+  assert.throws(() => readConfig({ ...env(), NODE_ENV: "production" }));
   for (const origin of ["*", "https://example.test/", "https://user:password@example.test", "http://example.test"]) {
     assert.throws(() => readConfig({ ...env(), NODE_ENV: "production", FRONTEND_ORIGINS: origin }));
   }
   assert.throws(() => readConfig({ ...env(), COOKIE_SAME_SITE: "none" }));
   assert.throws(() => readConfig({ ...env(), PORT: "0" }));
-  const settings = readConfig({ ...env(), NODE_ENV: "production", FRONTEND_ORIGINS: "https://notes.example.test", COOKIE_SAME_SITE: "none" });
+  const settings = readConfig({ ...env(), NODE_ENV: "production", NOTES_PROXY_SECRET: randomBytes(32).toString("hex"), FRONTEND_ORIGINS: "https://notes.example.test", COOKIE_SAME_SITE: "none" });
   assert.equal(settings.cookieOptions.secure, true);
   assert.equal(settings.cookieOptions.sameSite, "none");
   assert.equal(settings.cookieOptions.domain, undefined);

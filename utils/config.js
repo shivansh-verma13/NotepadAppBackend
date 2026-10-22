@@ -6,6 +6,10 @@ export function readConfig(env = process.env) {
     }
   }
   if (!env.MONGODB_URL) throw new Error("MONGODB_URL is required");
+  const proxySecret = env.NOTES_PROXY_SECRET;
+  if ((production || proxySecret) && (typeof proxySecret !== "string" || proxySecret.length < 32)) {
+    throw new Error("NOTES_PROXY_SECRET must contain at least 32 characters in production");
+  }
   const origins = (env.FRONTEND_ORIGINS || (production ? "" : "http://localhost:3000"))
     .split(",").map(value => value.trim()).filter(Boolean);
   if (!origins.length) throw new Error("FRONTEND_ORIGINS is required in production");
@@ -23,7 +27,7 @@ export function readConfig(env = process.env) {
   const port = Number(env.PORT || 4040);
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error("PORT must be between 1 and 65535");
   return {
-    origins, port, mongoUrl: env.MONGODB_URL, cookieSecret: env.COOKIE_SECRET,
+    origins, port, mongoUrl: env.MONGODB_URL, cookieSecret: env.COOKIE_SECRET, proxySecret,
     cookieOptions: { httpOnly: true, signed: true, path: "/", secure: production, sameSite },
   };
 }

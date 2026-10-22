@@ -1,7 +1,7 @@
 name: Notes API checks
 on:
   push:
-    branches: [upgrade/notes-v1]
+    branches: [upgrade/notes-v1, master]
   pull_request:
     branches: [master]
 permissions:
