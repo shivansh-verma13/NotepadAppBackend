@@ -21,40 +21,40 @@
     "WeatherAct",
     "Portfolio"
   ],
-  "nextTask": "Add explicit latest-version conflict recovery that preserves the unsaved edit draft and lets the owner compare it with the latest saved note before choosing a new edit; no automatic overwrite. Complete desktop/mobile browser verification when a supported browser is available.",
+  "nextTask": "Implement an opt-in summary API for one explicitly selected owned note, with source citations, server-configured provider/model, validated bounded output, timeout/cancellation/request caps and synthetic evaluation fixtures; record the provider/storage decision first. Complete pending desktop/mobile verification when a supported browser is available.",
   "pullRequests": [
     "https://github.com/shivansh-verma13/MERN-NotePadApp-Frontend/pull/1",
     "https://github.com/shivansh-verma13/NotepadAppBackend/pull/1"
   ],
   "verification": {
-    "frontendTests": 44,
+    "frontendTests": 56,
     "backendUnitHttpStartupTests": 17,
     "backendRealLocalMongoIntegrationTests": 3,
     "frontendBuild": "passed",
     "frontendChangedFileLint": "passed",
     "backendSyntaxChecks": "passed",
-    "browser": "Browser inventory empty; in-app and Chrome unavailable. Desktop/mobile stale-edit selectable draft/copy/close/reload, stale-delete guidance, reopened editor revision, keyboard/focus/responsive layout and prior create-retry/search/persisted CRUD/auth/cookie/CORS/throttle journeys remain unverified.",
+    "browser": "Browser inventory empty; iab and Chrome unavailable. Desktop/mobile latest comparison/read retry/missing/continue/manual-combine/repeated conflict/selection/copy/close/keyboard/focus/responsive behavior and prior create-retry/search/persisted CRUD/auth/cookie/CORS/throttle journeys remain unverified.",
     "realLocalMongo": "passed: auth/index/create-retry and conditional revisions/concurrency/reconnect/legacy/owner isolation; synthetic only",
     "liveNotesDatabase": "not verified",
     "deployment": "none; production unchanged",
     "backendAudit": "passed: zero findings after fresh locked install",
-    "backendCurrentRun": "Fresh locked install/expanded lint/all17 unit-HTTP-startup tests/3 real local synthetic Mongo integration scenarios and full audit zero passed.",
-    "frontendCurrentRun": "Fresh locked install/lint/all44 tests/build162.10kB main gzip/Vite contracts and full audit zero passed. 31 mocked UI/context,7 real-router/mock-API and6 real Axios loopback cases. No browser/live verification.",
-    "currentRunCI": "Pre-edit exact heads c779a17 frontend/c6594e8 backend passed. Final pushed heads and exact-head CI recorded in retained CHECKPOINT.md and PR bodies."
+    "backendCurrentRun": "Fresh locked install/syntax lint/all 17 unit-HTTP-startup tests/3 real temporary synthetic Mongo integration scenarios and full audit zero passed; runtime code unchanged.",
+    "frontendCurrentRun": "Fresh locked install/lint/all 56 tests/build 162.91 kB main gzip/Vite contracts and full audit zero passed. 42 mocked UI/context, 7 real-router/mock-API and 7 real Axios loopback cases. No browser/live verification.",
+    "currentRunCI": "Pre-edit exact heads 73f7c8c frontend/d980e1f backend passed; pushed current-head CI and exact SHAs recorded in retained CHECKPOINT.md and PR bodies."
   },
   "previousSubstantiveCommits": {
-    "frontend": "a25ca0d6a410e18aa149a31815d5940b991fa77f",
-    "backend": "8331c8ee947dd6b6f0606c6d01610bb4760e3306"
+    "frontend": "63da206064a907c6afd572dd070e22e10db22a2f",
+    "backend": "d980e1fb9c6a85702a59db66e5b4b0980650cb81"
   },
   "lastRun": {
-    "date": "2026-10-21",
-    "slice": "Owner-scoped conditional edit/delete revisions and retained conflict drafts",
+    "date": "2026-10-22",
+    "slice": "Explicit latest-version conflict comparison with retained drafts and conditional manual continuation",
     "commitReviewLinks": [
       "https://github.com/shivansh-verma13/MERN-NotePadApp-Frontend/pull/1/commits",
       "https://github.com/shivansh-verma13/NotepadAppBackend/pull/1/commits"
     ],
     "blockers": [
-      "Browser inventory empty; in-app and Chrome unavailable. Desktop/mobile stale-edit selectable draft/copy/close/reload, stale-delete guidance, reopened editor revision, keyboard/focus/responsive layout and prior create-retry/search/persisted CRUD/auth/cookie/CORS/throttle journeys remain unverified. Both fetched master trees have no workflows; GitHub hooks and deployment records are empty, which does not establish external Netlify/Render default-branch automatic-deploy wiring. Required browser correctness and unverified production deployment behavior block merging. Both PRs retained OPEN; no deployment, merge, live database/index operation or production replacement. Unsupported ESLint 9, hosted proxy/shared-worker budgets, owner-approved duplicate audit/backup/paused-registration username index build and approved synthetic HTTPS/database/SPA/API proxy setup remain separate release gates. Criteria 4\u20136 remain incomplete; Notes stays active."
+      "Browser inventory empty; iab and Chrome unavailable. Desktop/mobile latest comparison/read retry/missing/continue/manual-combine/repeated conflict/selection/copy/close/keyboard/focus/responsive behavior and prior create-retry/search/persisted CRUD/auth/cookie/CORS/throttle journeys remain unverified. Both fetched master trees have no workflows; GitHub hooks/deployments are empty, which does not establish external Netlify/Render default-branch auto-deploy wiring. Required browser correctness and unverified production deployment behavior block merging. Both PRs remain OPEN; no merge/deployment/live database/index operation or production replacement. Separate hosted-release gates: verified proxy/shared-worker budgets, owner-approved duplicate audit/backup/paused-registration username index rollout and approved synthetic HTTPS/database/SPA/API proxy setup. Criteria 4–6 remain incomplete; Notes stays active."
     ],
     "checkpoint": "Both UPGRADE_LOG.md/BACKLOG.md and isolated CHECKPOINT.md; no deployment"
   }
