@@ -1,10 +1,43 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { randomBytes } from "node:crypto";
+import { request } from "node:http";
+import { deflateSync } from "node:zlib";
 import { readConfig } from "../utils/config.js";
 import { createApp } from "../app.js";
 
 const env = () => ({ JWT_SECRET: randomBytes(32).toString("hex"), COOKIE_SECRET: randomBytes(32).toString("hex"), MONGODB_URL: "mongodb://127.0.0.1:27017/synthetic" });
+
+test("compressed JSON followed by late trailing bytes does not terminate the API", { timeout: 10000 }, async t => {
+  const server = createApp(readConfig(env())).listen(0, "127.0.0.1");
+  await new Promise(resolve => server.once("listening", resolve));
+  t.after(() => new Promise(resolve => server.close(resolve)));
+  const base = `http://127.0.0.1:${server.address().port}`;
+  // Finish the compressed frame before finishing the HTTP body. This exercises
+  // the decoder lifecycle behind GHSA-27r3-jxmh-p828 without touching persistence.
+  const frame = Buffer.concat([deflateSync("{}"), Buffer.from([0])]);
+  const trailing = Buffer.alloc(1024);
+  await new Promise((resolve, reject) => {
+    const outgoing = request(`${base}/notepad/user/logout`, { method: "POST", agent: false, headers: {
+      Origin: "http://localhost:3000", "X-Notes-Request": "1",
+      "Content-Type": "application/json", "Content-Encoding": "deflate",
+      "Content-Length": frame.length + trailing.length,
+    } }, response => {
+      response.resume();
+      response.once("error", reject);
+      response.once("end", () => {
+        outgoing.end(trailing);
+        if (response.statusCode !== 200) reject(new Error("Compressed logout failed"));
+      });
+    });
+    outgoing.setTimeout(3000, () => outgoing.destroy(new Error("Compressed request timed out")));
+    outgoing.once("error", reject);
+    outgoing.once("close", resolve);
+    outgoing.write(frame);
+  });
+  assert.equal((await fetch(`${base}/health`)).status, 503, "API still answers without a database");
+  assert.equal((await fetch(`${base}/notepad/user/logout`)).status, 405);
+});
 
 test("configuration fails closed and production cookies are host-only HTTPS", () => {
   assert.throws(() => readConfig({}), /JWT_SECRET/);
