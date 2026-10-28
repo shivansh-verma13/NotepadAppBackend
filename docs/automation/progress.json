@@ -33,22 +33,22 @@
     "frontendBuild": "passed",
     "frontendChangedFileLint": "passed",
     "backendSyntaxChecks": "passed",
-    "browser": "Prior parent constrained-width evidence remains partial. This run native Chrome selection denied: Computer Use was not approved to use Google Chrome. Remaining acceptance and hosted auth/cookies/persistence unverified.",
+    "browser": "2026-10-28: browser inventory and in-app creation explicitly blocked by Work settings. Prior parent real local browser checks remain historical; hosted HTTPS/signing/cookie/persistence not verified.",
     "realLocalMongo": "passed: auth/index/create-retry and conditional revisions/concurrency/reconnect/legacy/owner isolation; synthetic only",
     "liveNotesDatabase": "not verified",
     "deployment": "none; production unchanged",
     "backendAudit": "passed: zero findings after fresh locked install",
-    "backendCurrentRun": "2026-10-27: patched body-parser 1.20.9; fresh locked install/lint/20 unit-HTTP-startup cases/3 disposable synthetic Mongo scenarios/audit zero passed. Initial startup timing failure recovered by isolated and full reruns; no timeout change.",
-    "frontendCurrentRun": "2026-10-27: unchanged UI fresh install/lint/build/toolchain/2 proxy tests/audit zero passed; initial 55/56 parallel timing failure then 56/56 with one worker. No browser/live pass.",
-    "currentRunCI": "Prior exact heads passed PR CI; new backend security-patch head CI tracked in isolated CHECKPOINT.md and PR1."
+    "backendCurrentRun": "2026-10-28: qs 6.16.0 to 6.16.2 compatible transitive lockfile repair; fresh locked install/lint/20 unit-HTTP-startup tests/3 real disposable synthetic Mongo scenarios/audit zero passed.",
+    "frontendCurrentRun": "2026-10-28: fresh 442-package locked install/lint/56 tests one worker/2 proxy tests/build/toolchain/audit zero passed; runtime unchanged. No current browser/live pass.",
+    "currentRunCI": "Pre-edit exact heads push/PR CI passed. Patched backend exact-head CI recorded in run CHECKPOINT.md after push."
   },
   "previousSubstantiveCommits": {
     "frontend": "63da206064a907c6afd572dd070e22e10db22a2f",
     "backend": "d980e1fb9c6a85702a59db66e5b4b0980650cb81"
   },
   "lastRun": {
-    "date": "2026-10-27",
-    "slice": "Release verification and supported body-parser security patch",
+    "date": "2026-10-28",
+    "slice": "Release verification and compatible qs security patch",
     "commitReviewLinks": [
       "https://github.com/shivansh-verma13/MERN-NotePadApp-Frontend/pull/1/commits",
       "https://github.com/shivansh-verma13/NotepadAppBackend/pull/1/commits"
