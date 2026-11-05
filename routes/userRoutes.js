@@ -17,6 +17,7 @@ const userRoutes = express.Router();
 userRoutes.post("/login", validate(loginValidator), userLogin);
 userRoutes.post("/register", validate(registerValidator), userRegister);
 userRoutes.get("/auth", verifyToken, verifyUser);
-userRoutes.get("/logout", verifyToken, userLogout);
+userRoutes.post("/logout", userLogout);
+userRoutes.get("/logout", (_req, res) => res.set("Allow", "POST").status(405).json({ message: "Use POST to log out" }));
 
 export default userRoutes;
