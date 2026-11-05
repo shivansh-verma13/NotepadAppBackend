@@ -26,8 +26,13 @@ export function readConfig(env = process.env) {
   }
   const port = Number(env.PORT || 4040);
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error("PORT must be between 1 and 65535");
+  const registrationPaused = env.NOTES_REGISTRATION_PAUSED ?? (production ? "true" : "false");
+  if (!["true", "false"].includes(registrationPaused)) {
+    throw new Error("NOTES_REGISTRATION_PAUSED must be true or false");
+  }
   return {
     origins, port, mongoUrl: env.MONGODB_URL, cookieSecret: env.COOKIE_SECRET, proxySecret,
+    registrationPaused: registrationPaused === "true",
     cookieOptions: { httpOnly: true, signed: true, path: "/", secure: production, sameSite },
   };
 }

@@ -19,6 +19,10 @@ export function createApp(settings) {
     allowedHeaders: ["Content-Type", WRITE_HEADER],
     exposedHeaders: ["Retry-After"],
   }));
+  if (settings.registrationPaused) {
+    app.post("/notepad/user/register", (_req, res) =>
+      res.status(503).json({ message: "Registration is temporarily unavailable." }));
+  }
   const authLimiter = createAuthLimiter(settings.authLimit);
   app.post(["/notepad/user/login", "/notepad/user/register"], authLimiter);
   app.use(express.json({ limit: "128kb" }));

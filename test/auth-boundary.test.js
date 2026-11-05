@@ -51,6 +51,23 @@ test("configuration fails closed and production cookies are host-only HTTPS", ()
   assert.equal(settings.cookieOptions.secure, true);
   assert.equal(settings.cookieOptions.sameSite, "none");
   assert.equal(settings.cookieOptions.domain, undefined);
+  assert.equal(settings.registrationPaused, true);
+  assert.equal(readConfig(env()).registrationPaused, false);
+  assert.throws(() => readConfig({ ...env(), NOTES_REGISTRATION_PAUSED: "typo" }), /NOTES_REGISTRATION_PAUSED/);
+});
+
+test("pausing registration blocks requests before parsing while logout remains available", async t => {
+  const server = createApp(readConfig({ ...env(), NOTES_REGISTRATION_PAUSED: "true" })).listen(0, "127.0.0.1");
+  await new Promise(resolve => server.once("listening", resolve));
+  t.after(() => new Promise(resolve => server.close(resolve)));
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const post = route => fetch(`${base}/notepad/user/${route}`, {
+    method: "POST",
+    headers: { Origin: "http://localhost:3000", "X-Notes-Request": "1", "Content-Type": "application/json" },
+    body: route === "register" ? "{" : "{}",
+  });
+  assert.equal((await post("register")).status, 503);
+  assert.equal((await post("logout")).status, 200);
 });
 
 test("HTTP boundary rejects hostile/missing origins, simple writes and invalid bodies", async t => {
